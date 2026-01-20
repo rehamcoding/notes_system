@@ -14,3 +14,9 @@ This project focuses on:
 - Object relationships
 - Data ownership and references
 - Clean and readable OOP structure
+
+Learning Objectives:
+- Understand object relationships
+- Practice composition between classes
+- Track how data flows between objects
+- Build confidence in designing small OOP systems
