@@ -33,11 +33,11 @@ class User:
             action(*arge)
         except (IndexError, ValueError, TypeError) as e:
             print(e)
-
+    
     def check_note(self):
         self._safe_action(self.notebook.list_notes)
 
-    def display_note(self,index):
+    def update_note(self,index):
         self._safe_action(self.notebook.display_note, index)
 
     def delete_note(self, index):
@@ -76,5 +76,4 @@ class Notebook:
         name_note = self.notes[actual_index].title
         del self.notes[actual_index]
         print(f"'{name_note}' deleted.\n")
-
-
+        
