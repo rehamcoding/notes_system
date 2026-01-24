@@ -16,7 +16,7 @@ Content: {self.content}
 """)
 
     def __str__(self):
-        return f"{self.title} | {self.timestamp.strftime("%Y-%m-%d")}"
+        return f"{self.title} | {self.timestamp.strftime('%Y-%m-%d')}"
 
 
 class User:
@@ -28,14 +28,20 @@ class User:
         note = Note(title, content)
         self.notebook.store_note(note)
 
+    def _safe_action(self, action, *arge):
+        try:
+            action(*arge)
+        except (IndexError, ValueError, TypeError) as e:
+            print(e)
+
     def check_note(self):
-        self.notebook.list_notes()
+        self._safe_action(self.notebook.list_notes)
 
     def display_note(self,index):
-        self.notebook.display_note(index)
+        self._safe_action(self.notebook.display_note, index)
 
     def delete_note(self, index):
-        self.notebook.delete_note(index)
+        self._safe_action(self.notebook.delete_note, index)
 
 
 
@@ -48,30 +54,25 @@ class Notebook:
 
     def list_notes(self):
         if not self.notes:
-            print("Your notebook is empty.\n")
-            return
+            raise ValueError("Notebook is empty.")
         print(f"\nYour Notes:")
         for index, note in enumerate(self.notes, start=1):
             print(f"{index}- {note}")
 
     def display_note(self, index):
         if not self.notes:
-            print("Your notebook is empty")
-            return
+            raise ValueError("Notebook is empty")
         actual_index = index - 1
         if actual_index >= len(self.notes) or actual_index < 0:
-            print("Invalid note number.\n")
-            return
+            raise IndexError("Invalid note number.")
         self.notes[actual_index].display_full_note()
 
     def delete_note(self,index):
         if not self.notes:
-            print("Yuor notebook is empty.")
-            return
+            raise ValueError("Notebook is empty.")
         actual_index = index - 1
         if actual_index >= len(self.notes) or actual_index < 0:
-            print("Invalid note number.")
-            return
+            raise IndexError("Invalid note number.")
         name_note = self.notes[actual_index].title
         del self.notes[actual_index]
         print(f"'{name_note}' deleted.\n")
