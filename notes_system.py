@@ -28,13 +28,13 @@ class User:
         note = Note(title, content)
         self.notebook.store_note(note)
 
-    def _safe_action(self, action, *arge):
+    def _safe_action(self, action, *args):
         try:
-            action(*arge)
+            action(*args)
         except (IndexError, ValueError, TypeError) as e:
             print(e)
     
-    def view_note(self):
+    def view_notes(self):
         self._safe_action(self.notebook.list_notes)
 
     def update_note(self,index, choice, value):
@@ -59,15 +59,20 @@ class Notebook:
         for index, note in enumerate(self.notes, start=1):
             print(f"{index}- {note}")
 
-    def update_note(self, index,choice, value):
+    def update_note(self, index, field, new_value):
         if not self.notes:
             raise ValueError("Notebook is empty")
-        actual_index = index - 1
+        
+        actual_index = int(index) - 1
+
         if actual_index >= len(self.notes) or actual_index < 0:
             raise IndexError("Invalid note number.")
         #self.notes[actual_index].display_full_note()
         obj = self.notes[actual_index]
-        setattr(obj,choice, value)
+        if field not in ("title", "content"):
+            raise ValueError("You can only update title or content.")
+        setattr(obj, field, new_value)
+
 
     def delete_note(self,index):
         if not self.notes:
@@ -80,40 +85,43 @@ class Notebook:
         print(f"'{name_note}' deleted.\n")
 
 
+
 def create_user():
     name = input("Enter your name: ")    
     return User(name)
 
-user = create_user()
-
-
-def add_note():
+def add_note(user):
     title = input("Enter title: ")
     content = input("Enter content: ") 
     user.add_note(title, content)
 
-def update_note():
-    index = int(input("Enter note number to update: "))
-    choice = input("Update title or content: ").lower()
-    value = input(f"Enter new {choice}: ")
-    user.update_note(index, choice, value)
+def update_note(user):
+    index = input("Enter note number to update: ")
+    field = input("Update title or content: ").lower()
+    new_value = input(f"Enter new {field}: ")
+    user.update_note(index, field, new_value)
 
-def delete_note():
+def delete_note(user):
     index = int(input("Enter note number to delete: "))
     user.delete_note(index)
 
 
-while True:
-    print("\nMune [A]dd | [U]pdate | [V]iew | [D]elete | [Q]uit")
-    choice = input("Choose an option: ").lower()
+def main():
+    user = create_user()
+
+    while True:
+        print("\nMenu [A]dd | [U]pdate | [V]iew | [D]elete | [Q]uit")
+        choice = input("Choose an option: ").lower()
+
+        if choice == "a":
+            add_note(user)
+        elif choice == "u":
+            update_note(user)
+        elif choice == "v":
+            user.view_notes()
+        elif choice == "d":
+            delete_note(user)
+        else:
+            break
     
-    if choice == "a":
-        add_note()
-    elif choice == "u":
-        update_note()
-    elif choice == "v":
-        user.view_note()
-    elif choice == "d":
-        delete_note()
-    else:
-        break
+
